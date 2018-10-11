@@ -44,13 +44,13 @@ Bluetooth машинка с FPV камерой под управлением Ard
 FPV:
 - Камера 3 в 1 http://ali.pub/2sbd3l http://ali.pub/2sbd3z
 - FPV OTG приёмник http://ali.pub/2sbdfu http://ali.pub/2sbdg8  
-- Другие варианты приёма видео
-- FPV часы http://ali.pub/2sbd55
-- Крутой дисплей http://ali.pub/2sbdcj
-- Менее крутой http://ali.pub/2sbddp
-- FPV шлем как у меня http://ali.pub/2sbdh7
-- Хороший FPV шлем http://ali.pub/2sbdhs
-- FPV очки http://ali.pub/2sbdj5
+- Другие варианты приёма видео:
+  - FPV часы http://ali.pub/2sbd55
+  - Крутой дисплей http://ali.pub/2sbdcj
+  - Менее крутой http://ali.pub/2sbddp
+  - FPV шлем как у меня http://ali.pub/2sbdh7
+  - Хороший FPV шлем http://ali.pub/2sbdhs
+  - FPV очки http://ali.pub/2sbdj5
 
 ## Вам скорее всего пригодится
 * [Всё для пайки (паяльники и примочки)](http://alexgyver.ru/all-for-soldering/)
