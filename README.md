@@ -32,26 +32,40 @@ Bluetooth машинка с FPV камерой под управлением Ard
 <a id="chapter-3"></a>
 ## Материалы и компоненты
 ### Ссылки оставлены на магазины, с которых я закупаюсь уже не один год
-- Powerbank XiaoMI USBx2 http://ali.pub/2szu7p
-- Arduino NANO http://ali.pub/2sztzq  http://ali.pub/2szu0b
-- Bluetooth HC-06 http://ali.pub/2szu6c
-- Драйвер моторов http://ali.pub/2sbbzc
-- Моторчик и колесо http://ali.pub/2sbcp7 http://ali.pub/2sbcqy
-- 4 мотора и колёса http://ali.pub/2szu31
-- Макетка http://ali.pub/2szu5y
-- Провода для макетки http://ali.pub/2szu56
-- Танковое шасси http://ali.pub/2smqi3
-
-FPV:
-- Камера 3 в 1 http://ali.pub/2sbd3l http://ali.pub/2sbd3z
-- FPV OTG приёмник http://ali.pub/2sbdfu http://ali.pub/2sbdg8  
-- Другие варианты приёма видео:
-  - FPV часы http://ali.pub/2sbd55
-  - Крутой дисплей http://ali.pub/2sbdcj
-  - Менее крутой http://ali.pub/2sbddp
-  - FPV шлем как у меня http://ali.pub/2sbdh7
-  - Хороший FPV шлем http://ali.pub/2sbdhs
-  - FPV очки http://ali.pub/2sbdj5
+* Powerbank XiaoMI USBx2 https://ali.ski/VG87pw
+* Arduino NANO 328p – искать
+* https://ali.ski/tI7blh
+* https://ali.ski/O4yTxb
+* https://ali.ski/6_rFIS
+* https://ali.ski/gb92E-
+* Giant4 (Россия)
+* Bluetooth HC-06 – искать
+* https://ali.ski/yZRcry
+* https://ali.ski/fkffF
+* Драйвер – искать
+* https://ali.ski/ruOzOT
+* https://ali.ski/xAQftY
+* https://ali.ski/YW3UFq
+* Моторчик и колесо
+* https://ali.ski/FZHOP  
+* https://ali.ski/WzzAu_
+* 4 мотора и колёса https://ali.ski/gI0dAK
+* Макетка https://ali.ski/jAiIf
+* Провода для макетки https://ali.ski/01GLuw
+* Танковое шасси https://ali.ski/7XOMk3
+* FPV:
+* Камера 3 в 1
+* https://ali.ski/Ckzlx  
+* https://ali.ski/Bhj_Z
+* FPV OTG приёмник
+* https://ali.ski/Hx8N1A 
+* https://ali.ski/BLYWa-
+* Другие варианты приёма видео:
+* FPV часы https://ali.ski/7Gqwd
+* Крутой дисплей https://ali.ski/ws45VK
+* FPV шлем как у меня https://ali.ski/tCQp-P
+* Хороший FPV шлем https://ali.ski/rYkXNT
+* FPV очки https://ali.ski/Wnvrt
 
 ## Вам скорее всего пригодится
 * [Всё для пайки (паяльники и примочки)](http://alexgyver.ru/all-for-soldering/)
