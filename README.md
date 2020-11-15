@@ -93,6 +93,9 @@ Bluetooth машинка с FPV камерой под управлением Ard
 ## Настройки в коде
     MOTOR_MAX 255	// максимальный сигнал на мотор (max 255)
     JOY_MAX 40   	// рабочий ход джойстика (из приложения)
+    minDuty 0         // скорость, при которой мотор должен начинать крутится
+    RIGHT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону(NORMAL или REVERSE)
+    LEFT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону(NORMAL или REVERSE)
 	
 <a id="chapter-5"></a>
 ## FAQ
