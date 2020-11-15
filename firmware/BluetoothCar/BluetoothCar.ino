@@ -7,106 +7,100 @@
   http://AlexGyver.ru/
 */
 
-#define MOTOR_MAX 255	// максимальный сигнал на мотор (max 255)
-#define JOY_MAX 40   	// рабочий ход джойстика (из приложения)
+#define MOTOR_MAX 255     // максимальный сигнал на мотор (max 255)
+#define JOY_MAX 40        // рабочий ход джойстика (из приложения)
+#define minDuty 0         // скорость, при которой мотор должен начинать крутится
+#define RIGHT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону(NORMAL или REVERSE)
+#define LEFT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону(NORMAL или REVERSE)
 
-#define IN1 2
-#define IN2 3         // IN2 обязательно должен быть ШИМ пином!!!
-#define IN3 10
-#define IN4 11        // IN4 обязательно должен быть ШИМ пином!!!
+#define LEFT_MOTOR 2
+#define LEFT_MOTOR_PWM 3  //обязательно должен быть ШИМ пином!!!
+#define RIGHT_MOTOR 10
+#define RIGHT_MOTOR_PWM 11//обязательно должен быть ШИМ пином!!!
 
 #define BT_TX 13
 #define BT_RX 12
 
 /*
-	Bluetooth шлёт пакет вида $valueX valueY;
-	моя функция parsing разбивает этот пакет в массив intData
-	Парсинг полностью прозрачный, не блокирующий и с защитой от битого пакета,
-	так как присутствует строгий синтаксис посылки. Без хешсуммы конечно, но и так норм
+  Bluetooth шлёт пакет вида $valueX valueY;
+  моя функция parsing разбивает этот пакет в массив intData
+  Парсинг полностью прозрачный, не блокирующий и с защитой от битого пакета,
+  так как присутствует строгий синтаксис посылки. Без хешсуммы конечно, но и так норм
 */
-#define PARSE_AMOUNT 2         // число значений в массиве, который хотим получить
-
-int intData[PARSE_AMOUNT];     // массив численных значений после парсинга
-boolean recievedFlag;
-int dutyR, dutyL;
-int signalX, signalY;
-int dataX, dataY;
 
 #include "GyverMotor.h"
-GMotor motorL(IN1, IN2);
-GMotor motorR(IN3, IN4);
+GMotor motorR(DRIVER2WIRE, RIGHT_MOTOR, RIGHT_MOTOR_PWM, HIGH);//смени HIGH на LOW, если мотор работает неправильно
+GMotor motorL(DRIVER2WIRE, LEFT_MOTOR, LEFT_MOTOR_PWM, HIGH);//смени HIGH на LOW, если мотор работает неправильно
 
 #include <SoftwareSerial.h>
-SoftwareSerial btSerial(12, 13); // TX, RX
+SoftwareSerial BTserial(BT_TX, BT_RX); // TX, RX
 
-void setup() {
-  Serial.begin(9600);
-  btSerial.begin(9600);
+boolean doneParsing, startParsing;
+int dataX, dataY;
+String string_convert;
+
+void setup(){
+  BTserial.begin(9600);
+  motorR.setMinDuty(minDuty);
+  motorL.setMinDuty(minDuty);
+  motorR.setDirection(RIGHT_MOTOR_DIRECTION);
+  motorL.setDirection(LEFT_MOTOR_DIRECTION);
   //PWMfrequency(IN2, 1);   // 31 кГц
 }
 
-void loop() {
-  parsing();       				// функция парсинга
-  if (recievedFlag) {			// если получены данные
-    recievedFlag = false;
-    dataX = intData[0];
-    dataY = intData[1];
-    /*for (byte i = 0; i < PARSE_AMOUNT; i++) { // выводим элементы массива
-      Serial.print(intData[i]); Serial.print(" ");
-      } Serial.println();*/
-    Serial.print(dutyR);
-    Serial.print(" ");
-    Serial.println(dutyL);
+void loop(){
+  parsing();             // функция парсинга
+  if (doneParsing){      // если получены данные
+    doneParsing = false;
+    byte dutyR, dutyL;
+    if (dataX == 0 && dataY == 0){   // если мы в "мёртвой" зоне
+      motorR.setMode(STOP);           // не двигаемся
+      motorL.setMode(STOP);
+      dutyR = 0;
+      dutyL = 0;
+    } 
+    else{
+      byte signalX, signalY;
+      signalY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);         // сигнал по Y
+      signalX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
+
+      dutyR = signalY + signalX;
+      dutyL = signalY - signalX;
+
+      if (dutyR > 0) motorR.setMode(FORWARD);
+      else motorR.setMode(BACKWARD);
+
+      if (dutyL > 0) motorL.setMode(FORWARD);
+      else motorL.setMode(BACKWARD);
+
+      dutyR = constrain(abs(dutyR), 0, MOTOR_MAX);
+      dutyL = constrain(abs(dutyL), 0, MOTOR_MAX);
+    }
+    motorR.setSpeed(dutyR);
+    motorL.setSpeed(dutyL);
   }
-
-  if (dataX == 0 && dataY == 0) {   // если мы в "мёртвой" зоне
-    motorR.setMode(STOP);           // не двигаемся
-    motorL.setMode(STOP);
-    dutyR = 0;
-    dutyL = dutyR;
-  } else {
-    signalY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);         // сигнал по У
-    signalX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
-
-    dutyR = signalY + signalX;
-    dutyL = signalY - signalX;
-
-    if (dutyR > 0) motorR.setMode(FORWARD);
-    else motorR.setMode(BACKWARD);
-
-    if (dutyL > 0) motorL.setMode(FORWARD);
-    else motorL.setMode(BACKWARD);
-
-    dutyR = constrain(abs(dutyR), 0, MOTOR_MAX);
-    dutyL = constrain(abs(dutyL), 0, MOTOR_MAX);
-  }
-  motorR.setSpeed(dutyR);
-  motorL.setSpeed(dutyL);
 }
 
-boolean getStarted;
-byte index;
-String string_convert = "";
-void parsing() {
-  if (btSerial.available() > 0) {
-    char incomingByte = btSerial.read();        // обязательно ЧИТАЕМ входящий символ
-    if (getStarted) {                         // если приняли начальный символ (парсинг разрешён)
-      if (incomingByte != ' ' && incomingByte != ';') {   // если это не пробел И не конец
-        string_convert += incomingByte;       // складываем в строку
-      } else {                                // если это пробел или ; конец пакета
-        intData[index] = string_convert.toInt();  // преобразуем строку в int и кладём в массив
-        string_convert = "";                  // очищаем строку
-        index++;                              // переходим к парсингу следующего элемента массива
+void parsing(){
+  if (BTserial.available() > 0) {
+    char incomingChar = BTserial.read();//читаем из буфера
+    if (startParsing){//начать принятие пакета
+      if (incomingChar == ' '){//принят dataX
+        dataX = string_convert.toInt();
+        string_convert = "";
+      }
+      else if (incomingChar == ';'){//передача пакета завершена
+        dataY = string_convert.toInt();
+        string_convert = "";
+        startParsing = false;
+        doneParsing = true;//парсинг окончен, можно переходить к движению
+      }
+      else{
+        string_convert += incomingChar;
       }
     }
-    if (incomingByte == '$') {                // если это $
-      getStarted = true;                      // поднимаем флаг, что можно парсить
-      index = 0;                              // сбрасываем индекс
-      string_convert = "";                    // очищаем строку
-    }
-    if (incomingByte == ';') {                // если таки приняли ; - конец парсинга
-      getStarted = false;                     // сброс
-      recievedFlag = true;                    // флаг на принятие
+    if (incomingChar == '$'){//начало парсинга
+      startParsing = true;
     }
   }
 }
