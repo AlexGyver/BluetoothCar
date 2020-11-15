@@ -12,8 +12,8 @@
 #define MOTOR_MAX 255                 // максимальный сигнал на мотор (max 255)
 #define JOY_MAX 40                    // рабочий ход джойстика (из приложения)
 #define minDuty 0                     // скорость, при которой мотор должен начинать крутится
-#define RIGHT_MOTOR_DIRECTION NORMAL  //смени NORMAL на REVERSE если мотор крутится не в ту сторону
-#define LEFT_MOTOR_DIRECTION NORMAL   //смени NORMAL на REVERSE если мотор крутится не в ту сторону
+#define RIGHT_MOTOR_DIRECTION NORMAL  //напрваление мотора (NORMAL или REVERSE)
+#define LEFT_MOTOR_DIRECTION NORMAL   //напрваление мотора (NORMAL или REVERSE)
 #define RIGHT_MOTOR_MODE HIGH         //смени HIGH на LOW если мотор включает тормоз
 #define LEFT_MOTOR_MODE HIGH          //смени HIGH на LOW если мотор включает тормоз
 
@@ -68,8 +68,8 @@ void loop(){
       byte signalY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);         // сигнал по Y
       byte signalX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
 
-      dutyR = signalY + signalX;
-      dutyL = signalY - signalX;
+      dutyR = signalY + signalX; //считаем сигнал для правого мотора
+      dutyL = signalY - signalX; //считаем сигнал для левого мотора
 
       if (dutyR > 0) motorR.setMode(FORWARD);
       else motorR.setMode(BACKWARD);
@@ -80,31 +80,33 @@ void loop(){
       dutyR = constrain(abs(dutyR), 0, MOTOR_MAX);
       dutyL = constrain(abs(dutyL), 0, MOTOR_MAX);
     }
-    motorR.setSpeed(dutyR);
-    motorL.setSpeed(dutyL);
+    motorR.smoothTick(dutyR); //даем питание правому мотору
+    motorL.smoothTick(dutyL); //даем питание правому мотору
+    dutyR = 0;
+    dutyL = 0;
   }
 }
 
 void parsing(){
-  if (BTserial.available() > 0) {
+  if (BTserial.available() > 0){        //если в буфере есть данные
     char incomingChar = BTserial.read();//читаем из буфера
-    if (startParsing){//начать принятие пакета
-      if (incomingChar == ' '){//принят пакет dataX
-        dataX = string_convert.toInt();
-        string_convert = "";
+    if (startParsing){                  //начать принятие пакета
+      if (incomingChar == ' '){         //принят пакет dataX
+        dataX = string_convert.toInt(); //ковертируем принятый пакет в переменную
+        string_convert = "";            //очищаем переменную пакета
       }
-      else if (incomingChar == ';'){//принят пакет dataY
-        dataY = string_convert.toInt();
-        string_convert = "";
-        startParsing = false;
-        doneParsing = true;//парсинг окончен, можно переходить к движению
+      else if (incomingChar == ';'){    //принят пакет dataY
+        dataY = string_convert.toInt(); //ковертируем принятый пакет в переменную
+        string_convert = "";            //очищаем переменную пакета
+        startParsing = false;           //закончить принятие пакетов
+        doneParsing = true;             //парсинг окончен, можно переходить к движению
       }
       else{
-        string_convert += incomingChar;
+        string_convert += incomingChar; //записываем  принятые данные в переменную
       }
     }
-    if (incomingChar == '$'){//начало парсинга
-      startParsing = true;
+    if (incomingChar == '$'){           //начало парсинга
+      startParsing = true;              //начать принятие пакетов
     }
   }
 }
