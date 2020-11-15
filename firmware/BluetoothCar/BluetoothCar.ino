@@ -10,12 +10,12 @@
 #define MOTOR_MAX 255     // максимальный сигнал на мотор (max 255)
 #define JOY_MAX 40        // рабочий ход джойстика (из приложения)
 #define minDuty 0         // скорость, при которой мотор должен начинать крутится
-#define RIGHT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону(NORMAL или REVERSE)
-#define LEFT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону(NORMAL или REVERSE)
+#define RIGHT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону (NORMAL или REVERSE)
+#define LEFT_MOTOR_DIRECTION NORMAL//смени, если мотор крутится не в ту сторону (NORMAL или REVERSE)
 
-#define LEFT_MOTOR 2
+#define LEFT_MOTOR_D 2
 #define LEFT_MOTOR_PWM 3  //обязательно должен быть ШИМ пином!!!
-#define RIGHT_MOTOR 10
+#define RIGHT_MOTOR_D 10
 #define RIGHT_MOTOR_PWM 11//обязательно должен быть ШИМ пином!!!
 
 #define BT_TX 13
@@ -29,8 +29,8 @@
 */
 
 #include "GyverMotor.h"
-GMotor motorR(DRIVER2WIRE, RIGHT_MOTOR, RIGHT_MOTOR_PWM, HIGH);//смени HIGH на LOW, если мотор работает неправильно
-GMotor motorL(DRIVER2WIRE, LEFT_MOTOR, LEFT_MOTOR_PWM, HIGH);//смени HIGH на LOW, если мотор работает неправильно
+GMotor motorR(DRIVER2WIRE, RIGHT_MOTOR_D, RIGHT_MOTOR_PWM, HIGH);//смени HIGH на LOW, если мотор работает неправильно
+GMotor motorL(DRIVER2WIRE, LEFT_MOTOR_D, LEFT_MOTOR_PWM, HIGH);//смени HIGH на LOW, если мотор работает неправильно
 
 #include <SoftwareSerial.h>
 SoftwareSerial BTserial(BT_TX, BT_RX); // TX, RX
@@ -45,8 +45,8 @@ void setup(){
   motorL.setMinDuty(minDuty);
   motorR.setDirection(RIGHT_MOTOR_DIRECTION);
   motorL.setDirection(LEFT_MOTOR_DIRECTION);
-  //PWMfrequency(RIGHT_MOTOR_PWM, 1);  // 31 кГц
-  //PWMfrequency(LEFT_MOTOR_PWM, 1);   // 31 кГц
+  //PWMfrequency(RIGHT_MOTOR_PWM, 1);   // 31 кГц
+  //PWMfrequency(LEFT_MOTOR_PWM, 1);    // 31 кГц
 }
 
 void loop(){
