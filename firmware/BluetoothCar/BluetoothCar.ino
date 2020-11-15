@@ -12,16 +12,16 @@
 #define MOTOR_MAX 255                 // максимальный сигнал на мотор (max 255)
 #define JOY_MAX 40                    // рабочий ход джойстика (из приложения)
 #define minDuty 0                     // скорость, при которой мотор должен начинать крутится
-#define RIGHT_MOTOR_DIRECTION NORMAL  //напрваление мотора (NORMAL или REVERSE)
-#define LEFT_MOTOR_DIRECTION NORMAL   //напрваление мотора (NORMAL или REVERSE)
-#define RIGHT_MOTOR_MODE HIGH         //смени HIGH на LOW если мотор включает тормоз
-#define LEFT_MOTOR_MODE HIGH          //смени HIGH на LOW если мотор включает тормоз
+#define RIGHT_MOTOR_DIRECTION NORMAL  // напрваление мотора (NORMAL или REVERSE)
+#define LEFT_MOTOR_DIRECTION NORMAL   // напрваление мотора (NORMAL или REVERSE)
+#define RIGHT_MOTOR_MODE HIGH         // смени HIGH на LOW если мотор включает тормоз
+#define LEFT_MOTOR_MODE HIGH          // смени HIGH на LOW если мотор включает тормоз
 
 /*=============== ПИНЫ ===============*/
 #define LEFT_MOTOR_D 2
-#define LEFT_MOTOR_PWM 3              //обязательно должен быть ШИМ пином!!!
+#define LEFT_MOTOR_PWM 3              // обязательно должен быть ШИМ пином!!!
 #define RIGHT_MOTOR_D 10
-#define RIGHT_MOTOR_PWM 11            //обязательно должен быть ШИМ пином!!!
+#define RIGHT_MOTOR_PWM 11            // обязательно должен быть ШИМ пином!!!
 #define BT_TX 13
 #define BT_RX 12
 
@@ -68,8 +68,8 @@ void loop(){
       byte signalY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);         // сигнал по Y
       byte signalX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
 
-      dutyR = signalY + signalX; //считаем сигнал для правого мотора
-      dutyL = signalY - signalX; //считаем сигнал для левого мотора
+      dutyR = signalY + signalX; // считаем сигнал для правого мотора
+      dutyL = signalY - signalX; // считаем сигнал для левого мотора
 
       if (dutyR > 0) motorR.setMode(FORWARD);
       else motorR.setMode(BACKWARD);
@@ -80,33 +80,33 @@ void loop(){
       dutyR = constrain(abs(dutyR), 0, MOTOR_MAX);
       dutyL = constrain(abs(dutyL), 0, MOTOR_MAX);
     }
-    motorR.smoothTick(dutyR); //даем питание правому мотору
-    motorL.smoothTick(dutyL); //даем питание правому мотору
+    motorR.smoothTick(dutyR); // даем питание правому мотору
+    motorL.smoothTick(dutyL); // даем питание правому мотору
     dutyR = 0;
     dutyL = 0;
   }
 }
 
 void parsing(){
-  if (BTserial.available() > 0){        //если в буфере есть данные
-    char incomingChar = BTserial.read();//читаем из буфера
-    if (startParsing){                  //начать принятие пакета
-      if (incomingChar == ' '){         //принят пакет dataX
-        dataX = string_convert.toInt(); //ковертируем принятый пакет в переменную
-        string_convert = "";            //очищаем переменную пакета
+  if (BTserial.available() > 0){        // если в буфере есть данные
+    char incomingChar = BTserial.read();// читаем из буфера
+    if (startParsing){                  // начать принятие пакета
+      if (incomingChar == ' '){         // принять пакет dataX
+        dataX = string_convert.toInt(); // ковертируем принятый пакет в переменную
+        string_convert = "";            // очищаем переменную пакета
       }
-      else if (incomingChar == ';'){    //принят пакет dataY
-        dataY = string_convert.toInt(); //ковертируем принятый пакет в переменную
-        string_convert = "";            //очищаем переменную пакета
-        startParsing = false;           //закончить принятие пакетов
-        doneParsing = true;             //парсинг окончен, можно переходить к движению
+      else if (incomingChar == ';'){    // принят пакет dataY
+        dataY = string_convert.toInt(); // ковертируем принятый пакет в переменную
+        string_convert = "";            // очищаем переменную пакета
+        startParsing = false;           // закончить принятие пакетов
+        doneParsing = true;             // парсинг окончен, можно переходить к движению
       }
       else{
-        string_convert += incomingChar; //записываем  принятые данные в переменную
+        string_convert += incomingChar; // записываем  принятые данные в переменную
       }
     }
-    if (incomingChar == '$'){           //начало парсинга
-      startParsing = true;              //начать принятие пакетов
+    if (incomingChar == '$'){           // начало парсинга
+      startParsing = true;              // начать принятие пакетов
     }
   }
 }
