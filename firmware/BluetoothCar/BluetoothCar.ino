@@ -45,7 +45,8 @@ void setup(){
   motorL.setMinDuty(minDuty);
   motorR.setDirection(RIGHT_MOTOR_DIRECTION);
   motorL.setDirection(LEFT_MOTOR_DIRECTION);
-  //PWMfrequency(IN2, 1);   // 31 кГц
+  //PWMfrequency(RIGHT_MOTOR_PWM, 1);  // 31 кГц
+  //PWMfrequency(LEFT_MOTOR_PWM, 1);   // 31 кГц
 }
 
 void loop(){
