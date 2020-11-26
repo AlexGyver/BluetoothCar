@@ -4,7 +4,7 @@
   Исходники на GitHub: https://github.com/AlexGyver/BluetoothCar
   Нравится, как написан и закомментирован код? Поддержи автора! https://alexgyver.ru/support_alex/
   Автор: AlexGyver Technologies, 2018
-  Модифицировано: vitaliy172, 2020
+  Модифицировано: @vitaliy172, 2020
   http://AlexGyver.ru/
 */
 
@@ -13,9 +13,9 @@
 #define JOY_MAX 40                    // рабочий ход джойстика (из приложения)
 #define minDuty 0                     // скорость, при которой мотор должен начинать крутится
 #define RIGHT_MOTOR_DIRECTION NORMAL  // напрваление мотора (NORMAL или REVERSE)
-#define LEFT_MOTOR_DIRECTION NORMAL   // напрваление мотора (NORMAL или REVERSE)
-#define RIGHT_MOTOR_MODE HIGH         // смени HIGH на LOW если мотор включает тормоз
-#define LEFT_MOTOR_MODE HIGH          // смени HIGH на LOW если мотор включает тормоз
+#define LEFT_MOTOR_DIRECTION  NORMAL  // напрваление мотора (NORMAL или REVERSE)
+#define RIGHT_MOTOR_MODE      HIGH    // смени HIGH на LOW если мотор включает тормоз
+#define LEFT_MOTOR_MODE       HIGH    // смени HIGH на LOW если мотор включает тормоз
 
 /*=============== ПИНЫ ===============*/
 #define LEFT_MOTOR_D 2
@@ -39,59 +39,45 @@ GMotor motorL(DRIVER2WIRE, LEFT_MOTOR_D, LEFT_MOTOR_PWM, LEFT_MOTOR_MODE);
 #include <SoftwareSerial.h>
 SoftwareSerial BTserial(BT_TX, BT_RX); // TX, RX
 
-boolean doneParsing, startParsing;
+boolean doneParsing;
 int dataX, dataY;
-String string_convert;
 
 void setup(){
+  //D3 и D11 62.5 kHz PWM (благоприятно для електродвигателей)
+  TCCR2B = 0b00000001;
+  TCCR2A = 0b00000011;
+  
   BTserial.begin(9600);
+  
   motorR.setMinDuty(minDuty);
   motorL.setMinDuty(minDuty);
   motorR.setDirection(RIGHT_MOTOR_DIRECTION);
   motorL.setDirection(LEFT_MOTOR_DIRECTION);
-  //PWMfrequency(RIGHT_MOTOR_PWM, 1);   // 31 кГц
-  //PWMfrequency(LEFT_MOTOR_PWM, 1);    // 31 кГц
 }
 
 void loop(){
   parsing();             // функция парсинга
   if (doneParsing){      // если получены данные
     doneParsing = false;
-    byte dutyR, dutyL;
-    if (dataX == 0 && dataY == 0){    // если мы в "мёртвой" зоне
-      motorR.setMode(STOP);           // не двигаемся
-      motorL.setMode(STOP);
-      dutyR = 0;
-      dutyL = 0;
-    } 
-    else{
-      byte signalY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);         // сигнал по Y
-      byte signalX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
+    
+    int joystickX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
+    int joystickY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);         // сигнал по Y
 
-      dutyR = signalY + signalX; // считаем сигнал для правого мотора
-      dutyL = signalY - signalX; // считаем сигнал для левого мотора
+    int dutyR = joystickY + joystickX; // считаем сигнал для правого мотора
+    int dutyL = joystickY - joystickX; // считаем сигнал для левого мотора
 
-      if (dutyR > 0) motorR.setMode(FORWARD);
-      else motorR.setMode(BACKWARD);
-
-      if (dutyL > 0) motorL.setMode(FORWARD);
-      else motorL.setMode(BACKWARD);
-
-      dutyR = constrain(abs(dutyR), 0, MOTOR_MAX);
-      dutyL = constrain(abs(dutyL), 0, MOTOR_MAX);
-    }
-    motorR.smoothTick(dutyR); // даем питание правому мотору
-    motorL.smoothTick(dutyL); // даем питание правому мотору
-    dutyR = 0;
-    dutyL = 0;
+    motorR.smoothTick(dutyR); // крутим правый мотор
+    motorL.smoothTick(dutyL); // крутим левый мотор
   }
 }
 
 void parsing(){
+  static String string_convert;
+  static boolean startParsing;
   if (BTserial.available() > 0){        // если в буфере есть данные
     char incomingChar = BTserial.read();// читаем из буфера
-    if (startParsing){                  // начать принятие пакета
-      if (incomingChar == ' '){         // принять пакет dataX
+    if (startParsing){                  // начать принятие пакетов
+      if (incomingChar == ' '){         // принят пакет dataX
         dataX = string_convert.toInt(); // ковертируем принятый пакет в переменную
         string_convert = "";            // очищаем переменную пакета
       }
@@ -100,8 +86,7 @@ void parsing(){
         string_convert = "";            // очищаем переменную пакета
         startParsing = false;           // закончить принятие пакетов
         doneParsing = true;             // парсинг окончен, можно переходить к движению
-      }
-      else{
+      }else{
         string_convert += incomingChar; // записываем  принятые данные в переменную
       }
     }
