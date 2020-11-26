@@ -51,6 +51,8 @@ void setup(){
   
   BTserial.begin(9600);
   
+  motorR.setMode(AUTO);
+  motorL.setMode(AUTO);
   motorR.setMinDuty(minDuty);
   motorL.setMinDuty(minDuty);
   motorR.setDirection(RIGHT_MOTOR_DIRECTION);
