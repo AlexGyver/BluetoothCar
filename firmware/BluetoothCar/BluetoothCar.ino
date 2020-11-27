@@ -75,8 +75,8 @@ void loop(){
     int dutyR = joystickY + joystickX; // считаем сигнал для правого мотора
     int dutyL = joystickY - joystickX; // считаем сигнал для левого мотора
 
-    dutyR = constrain(abs(dutyR), -MOTOR_MAX, MOTOR_MAX);   // ограничиваем значение для dutyR, на случай если dutyR > 255
-    dutyL = constrain(abs(du  tyL), -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyL, на случай если dutyL > 255
+    dutyR = constrain(abs(dutyR), -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyR, на случай если dutyR > 255
+    dutyL = constrain(abs(dutyL), -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyL, на случай если dutyL > 255
     
     motorR.smoothTick(dutyR); // плавно крутим правый мотор
     motorL.smoothTick(dutyL); // плавно крутим левый мотор
