@@ -13,7 +13,7 @@
 #define JOY_MAX 40                    // рабочий ход джойстика (из приложения)
 #define minDuty 0                     // скорость, при которой мотор должен начинать крутится (обычно 0-25)
 #define RIGHT_MOTOR_DIRECTION NORMAL  // напрваление правого мотора (NORMAL или REVERSE)
-#define LEFT_MOTOR_DIRECTION  NORMAL  // напрваление правого мотора (NORMAL или REVERSE)
+#define LEFT_MOTOR_DIRECTION  NORMAL  // напрваление левого мотора (NORMAL или REVERSE)
 #define RIGHT_MOTOR_MODE      HIGH    // смени HIGH на LOW если мотор включает тормоз
 #define LEFT_MOTOR_MODE       HIGH    // смени HIGH на LOW если мотор включает тормоз
 
