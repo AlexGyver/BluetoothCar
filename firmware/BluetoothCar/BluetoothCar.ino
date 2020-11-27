@@ -1,5 +1,3 @@
-//СКЕТЧ НЕ ГОТОВ, НУЖНО СОВМЕСТИТЬ РАБОТУ ПРИЛОЖЕНИЯ И АРДУИНЫ!!!
-
 /*
   Скетч к проекту "Bluetooth машинка на Arduino"
   Страница проекта (схемы, описания): https://alexgyver.ru/bluetooth-car/
@@ -13,9 +11,9 @@
 /*============= НАСТРОЙКИ =============*/
 #define MOTOR_MAX 255                 // максимальный сигнал на мотор (max 255)
 #define JOY_MAX 40                    // рабочий ход джойстика (из приложения)
-#define minDuty 0                     // скорость, при которой мотор должен начинать крутится
-#define RIGHT_MOTOR_DIRECTION NORMAL  // напрваление мотора (NORMAL или REVERSE)
-#define LEFT_MOTOR_DIRECTION  NORMAL  // напрваление мотора (NORMAL или REVERSE)
+#define minDuty 0                     // скорость, при которой мотор должен начинать крутится (обычно 0-25)
+#define RIGHT_MOTOR_DIRECTION NORMAL  // напрваление правого мотора (NORMAL или REVERSE)
+#define LEFT_MOTOR_DIRECTION  NORMAL  // напрваление правого мотора (NORMAL или REVERSE)
 #define RIGHT_MOTOR_MODE      HIGH    // смени HIGH на LOW если мотор включает тормоз
 #define LEFT_MOTOR_MODE       HIGH    // смени HIGH на LOW если мотор включает тормоз
 
@@ -41,13 +39,20 @@ GMotor motorL(DRIVER2WIRE, LEFT_MOTOR_D, LEFT_MOTOR_PWM, LEFT_MOTOR_MODE);
 #include <SoftwareSerial.h>
 SoftwareSerial BTserial(BT_TX, BT_RX); // TX, RX
 
-boolean doneParsing;
+boolean doneParsing, startParsing;
 int dataX, dataY;
+String string_convert;
 
 void setup(){
+  #if (LEFT_MOTOR_PWM == 3 || LEFT_MOTOR_PWM == 11 || RIGHT_MOTOR_PWM == 3 || RIGHT_MOTOR_PWM == 11)
   //D3 и D11 62.5 kHz PWM (благоприятно для електродвигателей)
   TCCR2B = 0b00000001;
   TCCR2A = 0b00000011;
+  #elif (LEFT_MOTOR_PWM == 9 || LEFT_MOTOR_PWM == 10 || RIGHT_MOTOR_PWM == 9 || RIGHT_MOTOR_PWM == 10)
+  //D9 и D10 62.5 kHz PWM (благоприятно для електродвигателей)
+  TCCR1A = 0b00000001;
+  TCCR1B = 0b00001001;
+  #endif
   
   BTserial.begin(9600);
   
@@ -60,8 +65,8 @@ void setup(){
 }
 
 void loop(){
-  parsing();             // функция парсинга
-  if (doneParsing){      // если получены данные
+  parsing();        // функция парсинга
+  if (doneParsing){ // если получены данные
     doneParsing = false;
     
     int joystickX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
@@ -70,8 +75,8 @@ void loop(){
     int dutyR = joystickY + joystickX; // считаем сигнал для правого мотора
     int dutyL = joystickY - joystickX; // считаем сигнал для левого мотора
 
-    dutyR = constrain(abs(dutyR), 0, MOTOR_MAX); // ограничиваем значение для dutyR, на всяк пожарный
-    dutyL = constrain(abs(dutyL), 0, MOTOR_MAX); // ограничиваем значение для dutyL, на всяк пожарный
+    dutyR = constrain(abs(dutyR), -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyR, на случай если dutyR > 255
+    dutyL = constrain(abs(dutyL), -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyL, на случай если dutyL > 255
     
     motorR.smoothTick(dutyR); // крутим правый мотор
     motorL.smoothTick(dutyL); // крутим левый мотор
@@ -79,8 +84,6 @@ void loop(){
 }
 
 void parsing(){
-  static String string_convert;
-  static boolean startParsing;
   if (BTserial.available() > 0){        // если в буфере есть данные
     char incomingChar = BTserial.read();// читаем из буфера
     if (startParsing){                  // начать принятие пакетов
