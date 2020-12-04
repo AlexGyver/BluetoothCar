@@ -44,15 +44,15 @@ int dataX, dataY;
 String string_convert;
 
 void setup() {
-#if (LEFT_MOTOR_PWM == 3 || LEFT_MOTOR_PWM == 11 || RIGHT_MOTOR_PWM == 3 || RIGHT_MOTOR_PWM == 11)
-  //D3 и D11 62.5 kHz PWM (благоприятно для електродвигателей)
-  TCCR2B = 0b00000001;
-  TCCR2A = 0b00000011;
-#elif (LEFT_MOTOR_PWM == 9 || LEFT_MOTOR_PWM == 10 || RIGHT_MOTOR_PWM == 9 || RIGHT_MOTOR_PWM == 10)
-  //D9 и D10 62.5 kHz PWM (благоприятно для електродвигателей)
-  TCCR1A = 0b00000001;
-  TCCR1B = 0b00001001;
-#endif
+  #if (LEFT_MOTOR_PWM == 3 || LEFT_MOTOR_PWM == 11 || RIGHT_MOTOR_PWM == 3 || RIGHT_MOTOR_PWM == 11)
+    //D3 и D11 62.5 kHz PWM (благоприятно для електродвигателей)
+    TCCR2B = 0b00000001;
+    TCCR2A = 0b00000011;
+  #elif (LEFT_MOTOR_PWM == 9 || LEFT_MOTOR_PWM == 10 || RIGHT_MOTOR_PWM == 9 || RIGHT_MOTOR_PWM == 10)
+    //D9 и D10 62.5 kHz PWM (благоприятно для електродвигателей)
+    TCCR1A = 0b00000001;
+    TCCR1B = 0b00001001;
+  #endif
 
   BTserial.begin(9600);
 
@@ -88,11 +88,11 @@ void parsing() {
     char incomingChar = BTserial.read();// читаем из буфера
     if (startParsing) {                 // начать принятие пакетов
       if (incomingChar == ' ') {        // принят пакет dataX
-        dataX = string_convert.toInt(); // ковертируем принятый пакет в число
+        dataX = string_convert.toInt(); // ковертируем принятый пакет в переменную
         string_convert = "";            // очищаем переменную пакета
       }
       else if (incomingChar == ';') {   // принят пакет dataY
-        dataY = string_convert.toInt(); // ковертируем принятый пакет в число
+        dataY = string_convert.toInt(); // ковертируем принятый пакет в переменную
         string_convert = "";            // очищаем переменную пакета
         startParsing = false;           // закончить принятие пакетов
         doneParsing = true;             // парсинг окончен, можно переходить к движению
