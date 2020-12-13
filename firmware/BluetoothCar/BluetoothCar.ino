@@ -37,7 +37,7 @@ GMotor motorL(IN1, IN2);
 GMotor motorR(IN3, IN4);
 
 #include <SoftwareSerial.h>
-SoftwareSerial btSerial(12, 13); // TX, RX
+SoftwareSerial btSerial(BT_TX, BT_RX); // TX, RX
 
 void setup() {
   Serial.begin(9600);
