@@ -43,6 +43,7 @@ void setup() {
   Serial.begin(9600);
   btSerial.begin(9600);
   //PWMfrequency(IN2, 1);   // 31 кГц
+  //PWMfrequency(IN4, 1);   // 31 кГц
 }
 
 void loop() {
@@ -80,8 +81,13 @@ void loop() {
     dutyR = constrain(abs(dutyR), 0, MOTOR_MAX);
     dutyL = constrain(abs(dutyL), 0, MOTOR_MAX);
   }
-  motorR.setSpeed(dutyR);
-  motorL.setSpeed(dutyL);
+  if (dataY < 0) {
+    motorL.setSpeed(dutyR);
+    motorR.setSpeed(dutyL);
+  } else {
+    motorR.setSpeed(dutyR);
+    motorL.setSpeed(dutyL);
+  }
 }
 
 boolean getStarted;
