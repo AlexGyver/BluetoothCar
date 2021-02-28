@@ -44,7 +44,7 @@ int dataX, dataY;
 String string_convert;
 
 void setup() {
-  //команды, начинающиеся с '#' - команды прекомпилятору, т. е. обрабатіваются ПК, не Ардуино
+  //команды, начинающиеся с '#' - команды прекомпилятору, т. е. обрабатываются ПК, не Ардуино
   #if (LEFT_MOTOR_PWM == 3 || LEFT_MOTOR_PWM == 11 || RIGHT_MOTOR_PWM == 3 || RIGHT_MOTOR_PWM == 11)
     //D3 и D11 62.5 kHz PWM (благоприятно для електродвигателей)
     TCCR2B = 0b00000001;
@@ -57,27 +57,27 @@ void setup() {
 
   BTserial.begin(9600);
 
-  motorR.setMode(AUTO);
-  motorL.setMode(AUTO);
-  motorR.setMinDuty(minDuty);
-  motorL.setMinDuty(minDuty);
-  motorR.setDirection(RIGHT_MOTOR_DIRECTION);
-  motorL.setDirection(LEFT_MOTOR_DIRECTION);
+  motorR.setMode(AUTO); // управление мотором скоростью (-255-255)
+  motorL.setMode(AUTO); // управление мотором скоростью (-255-255)
+  motorR.setMinDuty(minDuty); // минимальная скорость, при которой мотор начинает крутиться
+  motorL.setMinDuty(minDuty); // минимальная скорость, при которой мотор начинает крутиться
+  motorR.setDirection(RIGHT_MOTOR_DIRECTION); // направление правого мотора
+  motorL.setDirection(LEFT_MOTOR_DIRECTION);  // направление левого мотора
 }
 
 void loop() {
-  parsing();         // функция парсинга
-  if (doneParsing) { // если получены данные
-    doneParsing = false;
+  parsing();             // функция парсинга
+  if (doneParsing) {     // если получены данные
+    doneParsing = false; // сбросить флаг на получение
 
-    int joystickX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX / 2, MOTOR_MAX / 2); // сигнал по Х
-    int joystickY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);         // сигнал по Y
+    int joystickX = map((dataX), -JOY_MAX, JOY_MAX, -MOTOR_MAX * 0.5 , MOTOR_MAX * 0.5); // сигнал по Х
+    int joystickY = map((dataY), -JOY_MAX, JOY_MAX, -MOTOR_MAX, MOTOR_MAX);              // сигнал по Y
 
     int dutyR = joystickY + joystickX; // считаем сигнал для правого мотора
     int dutyL = joystickY - joystickX; // считаем сигнал для левого мотора
 
-    dutyR = constrain(dutyR, -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyR, на случай если dutyR > 255
-    dutyL = constrain(dutyL, -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyL, на случай если dutyL > 255
+    dutyR = constrain(dutyR, -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyR, на случай если dutyR > || < 255
+    dutyL = constrain(dutyL, -MOTOR_MAX, MOTOR_MAX); // ограничиваем значение для dutyL, на случай если dutyL > || < 255
 
     motorR.smoothTick(dutyR); // плавно крутим правый мотор
     motorL.smoothTick(dutyL); // плавно крутим левый мотор
@@ -98,10 +98,10 @@ void parsing() {
         startParsing = false;           // закончить принятие пакетов
         doneParsing = true;             // парсинг окончен, можно переходить к движению
       } else {
-        string_convert += incomingChar; // записываем  принятые данные в переменную
+        string_convert += incomingChar; // записываем принятые данные в переменную
       }
     }
-    if (incomingChar == '$') {          // начало парсинга
+    else if (incomingChar == '$') {     // начало парсинга
       startParsing = true;              // начать принятие пакетов
     }
   }
