@@ -37,7 +37,7 @@ GMotor motorR(DRIVER2WIRE, RIGHT_MOTOR_D, RIGHT_MOTOR_PWM, RIGHT_MOTOR_MODE);
 GMotor motorL(DRIVER2WIRE, LEFT_MOTOR_D, LEFT_MOTOR_PWM, LEFT_MOTOR_MODE);
 
 #include <SoftwareSerial.h>
-SoftwareSerial BTserial(BT_TX, BT_RX); // TX, RX
+SoftwareSerial BTserial(BT_RX, BT_TX);
 
 boolean doneParsing, startParsing;
 int dataX, dataY;
